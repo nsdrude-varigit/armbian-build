@@ -40,7 +40,7 @@ else
 	TI_PACKAGES+=("ti-lvgl-demo")
 fi
 
-TI_PACKAGES+=("firmware-cnm-wave")
+#TI_PACKAGES+=("firmware-cnm-wave")
 
 if [[ ! -z ${EXTRA_BOARD_PACKAGES} ]] ; then
 	TI_PACKAGES+=("${EXTRA_BOARD_PACKAGES[@]}")
