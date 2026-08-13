@@ -46,7 +46,7 @@ jobs:
           df -h / /mnt
 
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Register QEMU for arm64
         uses: docker/setup-qemu-action@v3
