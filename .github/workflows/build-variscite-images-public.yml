@@ -1,0 +1,78 @@
+name: Build Variscite images - Public
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-images-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-image:
+    # GitHub-hosted runners are free only for public repositories.
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - var-som-am62p
+
+    steps:
+      # GitHub-hosted runners provide more free space under /mnt.
+      - name: Relocate workspace
+        if: "!contains(runner.labels, 'self-hosted')"
+        run: |
+          sudo mkdir -p /mnt/work
+          sudo rm -rf "$GITHUB_WORKSPACE"
+          sudo ln -s /mnt/work "$GITHUB_WORKSPACE"
+          sudo chown -R "$USER:$USER" /mnt/work
+
+      - name: Free hosted runner disk space
+        if: "!contains(runner.labels, 'self-hosted')"
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          docker image prune --all --force
+          df -h / /mnt
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Register QEMU for arm64
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+          cache-image: false
+
+      - name: Record commit
+        id: commit
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build ${{ matrix.board }} image
+        run: |
+          ./compile.sh build \
+            BOARD="${{ matrix.board }}" \
+            BRANCH=vendor \
+            BUILD_MINIMAL=yes \
+            KERNEL_CONFIGURE=no \
+            RELEASE=trixie \
+            GIT_SKIP_SUBMODULES=yes \
+            SKIP_ARMBIAN_REPO=yes
+
+      - name: Upload ${{ matrix.board }} image
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.board }}-trixie-vendor-${{ steps.commit.outputs.short_sha }}
+          path: output/images/*
+          if-no-files-found: error
+          retention-days: 7
