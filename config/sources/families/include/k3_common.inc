@@ -40,7 +40,8 @@ else
 	TI_PACKAGES+=("ti-lvgl-demo")
 fi
 
-TI_PACKAGES+=("firmware-cnm-wave")
+# Don't install firmware-cnm-wave from TI, it also now also provided by Debian
+#TI_PACKAGES+=("firmware-cnm-wave")
 
 if [[ ! -z ${EXTRA_BOARD_PACKAGES} ]] ; then
 	TI_PACKAGES+=("${EXTRA_BOARD_PACKAGES[@]}")
