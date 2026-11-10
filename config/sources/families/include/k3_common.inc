@@ -116,12 +116,12 @@ function post_uboot_custom_postprocess__update_uboot_names() {
 	cp ${UBOOT_FILE} u-boot.img || true
 }
 
-function pre_prepare_partitions() {
+function pre_prepare_partitions__k3_common() {
 	# Filesystem must fill partition regardless of alignment
 	mkopts[fat]='-a'
 }
 
-function post_create_partitions() {
+function post_create_partitions__k3_common() {
 	display_alert "Setting boot partition flags on" "${SDCARD}.raw" "debug"
 
 	# ROM is very particular about boot flags
@@ -129,7 +129,7 @@ function post_create_partitions() {
 	run_host_command_logged parted "${SDCARD}".raw set 1 bls_boot off
 }
 
-function format_partitions() {
+function format_partitions__k3_common() {
 	# ROM is very particular about partition IDs
 	run_host_command_logged sfdisk --part-type ${LOOP} 1 e
 }
