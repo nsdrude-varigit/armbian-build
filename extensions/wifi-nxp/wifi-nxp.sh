@@ -202,11 +202,11 @@ function post_install_kernel_debs__wifi_nxp() {
 	# Add the DKMS-specific files maintained alongside the extension.
 	#
 	cp \
-		"${SRC}/extensions/wifi_nxp/dkms.conf" \
+		"${SRC}/extensions/wifi-nxp/dkms.conf" \
 		"${host_source_dir}/dkms.conf"
 
 	cp \
-		"${SRC}/extensions/wifi_nxp/dkms-build.sh" \
+		"${SRC}/extensions/wifi-nxp/dkms-build.sh" \
 		"${host_source_dir}/dkms-build.sh"
 
 	chmod 0755 \
