@@ -18,6 +18,8 @@ function custom_apt_repo__install_var_packages() {
 	cat > "${SDCARD}/etc/apt/sources.list.d/var.sources" <<- EOF
 Types: deb
 URIs: https://varigit.github.io/var-debpkgs/var
+ https://varigit.github.io/var-debpkgs/var-ti
+ https://varigit.github.io/var-debpkgs/${BOARD}
 Suites: ${RELEASE}
 Components: main
 Trusted: yes
