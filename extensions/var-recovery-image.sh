@@ -35,6 +35,9 @@ function extension_prepare_config__add_var_packages() {
 	if [[ ${#VAR_PACKAGES[@]} -gt 0 ]] ; then
 		add_packages_to_image "${VAR_PACKAGES[@]}"
 	fi
+
+	# don't remove HOME DIR during image creation
+	INCLUDE_HOME_DIR=yes
 }
 
 function pre_customize_image__make_var_modifications() {
