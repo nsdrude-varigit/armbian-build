@@ -19,7 +19,7 @@ function extension_prepare_config__add_var_packages() {
 	# strictly necessary for other customer images
 	VAR_PACKAGES+=("docker.io" "docker-cli")                          # for Docker tests
 	VAR_PACKAGES+=("var-mii" "iperf3" "net-tools" "util-linux-extra") # for network tests
-	VAR_PACKAGES+=("bluez")                                           # for BT tests
+	VAR_PACKAGES+=("bluez" "obexftp" "bluez-alsa-utils")              # for BT tests
 	VAR_PACKAGES+=("can-utils")                                       # for CAN tests
 	VAR_PACKAGES+=("evtest")                                          # for touch / input tests
 	VAR_PACKAGES+=("i2c-tools" "spi-tools")                           # for SPI / I2C tests
