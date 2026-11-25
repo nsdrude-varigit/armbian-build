@@ -1,0 +1,49 @@
+name: Build all machines - Public
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-armbian:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [am62x-var-som, am62px-var-som]
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Build Debian Trixie image
+        env:
+          BOARD: ${{ matrix.board }}
+        run: |
+          df -h .
+          ./compile.sh build \
+            BOARD="$BOARD" BRANCH=vendor RELEASE=trixie \
+            BUILD_MINIMAL=yes BUILD_DESKTOP=no KERNEL_CONFIGURE=no \
+            PREFER_DOCKER=no COMPRESS_OUTPUTIMAGE=xz,sha \
+            INCLUDE_VAR_INSTALL=no
+
+      - name: Verify image checksum
+        working-directory: output/images
+        run: sha256sum --check --strict -- *.img.xz.sha
+
+      # The recovery image has default passwords and is for testing only.
+      - name: Upload CI recovery image
+        uses: actions/upload-artifact@v4
+        with:
+          name: armbian-ci-trixie-${{ matrix.board }}-${{ github.sha }}
+          path: |
+            output/images/*.img.xz
+            output/images/*.img.xz.sha
+          if-no-files-found: error
+          compression-level: 0
