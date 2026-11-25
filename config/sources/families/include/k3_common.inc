@@ -79,6 +79,8 @@ ROOT_FS_LABEL="root"
 function add_host_dependencies__k3_python3_dep() {
 	display_alert "Preparing K3 U-Boot host-side dependencies" "${EXTENSION}" "info"
 	declare -g EXTRA_BUILD_DEPS="${EXTRA_BUILD_DEPS} python3-yaml python3-jsonschema yamllint python3-cryptography python3-pyelftools python3-setuptools"
+	# OP-TEE builds 32-bit trusted applications even with a 64-bit core.
+	EXTRA_BUILD_DEPS+=" gcc-arm-linux-gnueabihf"
 }
 
 function compile_k3_bootgen() {
